@@ -32,7 +32,7 @@ tf.serialization.registerClass(L2);
 window.addEventListener("load" , (e) => {
 
     async function loadMobilenet() {
-    const model = await tf.loadLayersModel("../trained_models/model.json");
+    const model = await tf.loadLayersModel("https://raw.githubusercontent.com/abdelrahmanfekryy/CORELIA_Task/main/Arabic%20Handwritten%20Characters%20Recognition/trained_models/model.json");
     return model
     }
     mymodel = loadMobilenet();

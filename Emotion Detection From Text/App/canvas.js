@@ -23,12 +23,12 @@ tf.serialization.registerClass(L2);
 window.addEventListener("load" , (e) => {
 
     async function loadModel() {
-    const model = await tf.loadLayersModel("https://raw.githubusercontent.com/abdelrahmanfekryy/test_3/main/model.json");
+    const model = await tf.loadLayersModel("https://raw.githubusercontent.com/abdelrahmanfekryy/CORELIA_Task/main/Emotion%20Detection%20From%20Text/trained_models/model.json");
     return model
     }
     mymodel = loadModel();
 
-    fetch('https://raw.githubusercontent.com/abdelrahmanfekryy/test_3/main/tokenizer.json')
+    fetch('https://raw.githubusercontent.com/abdelrahmanfekryy/CORELIA_Task/main/Emotion%20Detection%20From%20Text/trained_models/tokenizer.json')
     .then(response => response.json())
     .then(data => tokenizer = data)
     
