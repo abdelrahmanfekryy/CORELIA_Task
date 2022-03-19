@@ -1,0 +1,203 @@
+body, html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+.container{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-areas: 'sidebar app chart';
+    grid-template-columns: 0.6fr 1.2fr 1.2fr;
+    gap: 10px;
+    user-select: none;
+    background-image: radial-gradient(circle,#5A4A9A,#4673B1,#339BA0,#7FC3B5,white);
+}
+
+/*sidebar*/
+.sidebar{
+    background-image: linear-gradient(to top,#5A4A9A,#4673B1,#339BA0,#7FC3B5);
+    box-shadow: 0px 0px 10px rgb(240, 240, 240);
+    display: grid;
+    grid-template-areas: "logo name" "title title" "author author";
+    grid-template-columns: 0.5fr 1.5fr;
+    grid-template-rows: 0.5fr 2.2fr 0.3fr;
+    gap: 5px;
+}
+.sidebar #logo{
+    grid-area: logo;
+    margin: auto;
+    width: 70%;
+}
+
+.sidebar #name{
+    grid-area: name;
+    margin: auto 0;
+}
+
+.sidebar #title{
+    grid-area: title;
+    color: white;
+    text-align: center;
+    font-size: 200%;
+    margin: auto 0;
+}
+
+.sidebar #author{
+    grid-area: author;
+    color: white;
+    text-align: center;
+}
+
+
+/*canvas*/
+.app {
+    display: grid;
+    grid-template-areas: "text text" "canvas canvas" "submitbutton clearbutton";
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 0.5fr 2fr 0.5fr;
+    gap: 5px;
+    background-color: rgb(243,241,252,1);
+    border-radius: 30px;
+}
+
+.app #text{
+    grid-area: text;
+    text-align: center;
+    margin: auto 0px;
+}
+
+.app #canvas{
+    grid-area: canvas;
+    text-align: center;
+    margin: auto 0px;
+}
+
+.app #submitbutton{
+    grid-area: submitbutton;
+    text-align: center;
+    margin: auto;
+}
+
+.app button{
+    background-color: rgba(0,160,153,1);
+    border: none;
+    border-radius: 10px;
+    color: rgb(255, 255, 255);
+    width: 100px;
+    padding: 15px 30px;
+    transition:all .3s, transform .15s;
+    font-weight:bold;
+    box-shadow: rgba(0,160,153,1) 0px 5px 15px;
+}
+
+.app button:hover{
+    background-color: rgba(85,61,142,1);
+    box-shadow: rgba(85,61,142,1) 0px 5px 15px;
+}
+
+.app button:active {
+    transform: scale(0.9);
+}
+
+.app #clearbutton{
+    grid-area: clearbutton;
+    text-align: center;
+    margin: auto;
+}
+
+.app #canvas canvas{
+    border: 2px solid black;
+    background-color: white;
+    margin: auto;
+}
+
+/* chart */
+.chart{
+    background-color: rgb(243,241,252,1);
+    border-radius: 30px;
+    display: grid;
+    grid-template-areas: "title" "plotarea" "result";
+    grid-template-rows: 0.3fr 2.4fr 0.3fr;
+    gap: 5px;
+}
+
+.chart #title {
+    grid-area: title;
+    text-align: center;
+    margin: auto;
+}
+
+.chart #result {
+    grid-area: result;
+    text-align: center;
+    margin: auto;
+}
+
+.chart #plotarea {
+    grid-area: plotarea;
+    margin: auto;
+}
+
+.barscontainer {
+    cursor: pointer;
+    font-size: 10px;
+    width: 500px;
+}
+
+.var {
+    width: 100%;
+    height: 3.5%;
+    padding: 2.5px 0;
+    display: grid;
+    grid-template-areas: 'ticks bar label';
+    grid-template-columns: 0.1fr 2.7fr 0.2fr;
+    gap: 4px;
+}
+.var .ticks{
+    width: 100%;
+    height: 100%;
+}
+.var .ticks p{
+    margin: 0;
+    padding: 0;
+    color: rgb(0, 0, 0);
+    position: relative;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%); 
+}
+.var .bar{
+    background: linear-gradient(to right,#5A4A9A,#4673B1,#339BA0,#7FC3B5);
+    height: 100%;
+    border-left: 4px solid rgba(0,160,153,1);
+    width: 0%;
+}
+.var:hover .bar{
+    filter: brightness(150%)
+}
+.var .label{
+    visibility: hidden;
+    width:100%;
+    height:100%;
+    background: white;
+    color: black;
+    text-align: center;
+    border-radius: 5px;
+}
+.var .label p {
+    margin: 0;
+    padding: 0;
+    color: black;
+    position: relative;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%); 
+}
+.var:hover .label{
+    visibility: visible;
+}
