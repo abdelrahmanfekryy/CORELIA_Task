@@ -1,6 +1,6 @@
 import numpy as np
-import cv2
-from scipy.ndimage import interpolation as inter
+from cv2 import cvtColor,threshold,GaussianBlur,bitwise_not,findContours,connectedComponentsWithStats,connectedComponents,COLOR_BGR2GRAY,THRESH_BINARY,THRESH_OTSU,RETR_TREE,CHAIN_APPROX_NONE,CHAIN_APPROX_SIMPLE
+from scipy.ndimage.interpolation import rotate
 from PIL import Image as im
 from skimage.morphology import skeletonize
 
@@ -10,16 +10,16 @@ def deskew(image,filter:int=1):
 
 
     if len(image.shape) == 3:
-        gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        gray_img = cvtColor(image, COLOR_BGR2GRAY)
     else:
         gray_img = image
 
     # Otsus Binarization
     if filter != 0:
-        blur = cv2.GaussianBlur(gray_img, (3,3), 0)
-        binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        blur = GaussianBlur(gray_img, (3,3), 0)
+        binary_img = threshold(blur, 0, 255, THRESH_BINARY + THRESH_OTSU)[1]
     else:
-        binary_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        binary_img = threshold(gray_img, 0, 255, THRESH_BINARY + THRESH_OTSU)[1]
 
     # deskew
 
@@ -30,7 +30,7 @@ def deskew(image,filter:int=1):
     angles = np.arange(-limit, limit+delta, delta)
     scores = []
     for angle in angles:
-        data = inter.rotate(bin_img, angle, reshape=False, order=0)
+        data = rotate(bin_img, angle, reshape=False, order=0)
         hist = np.sum(data, axis=1)
         score = np.sum((hist[1:] - hist[:-1]) ** 2)
         scores.append(score)
@@ -39,7 +39,7 @@ def deskew(image,filter:int=1):
     best_angle = angles[scores.index(best_score)]
 
     # correct skew
-    data = inter.rotate(bin_img, best_angle, reshape=False, order=0)
+    data = rotate(bin_img, best_angle, reshape=False, order=0)
     img = im.fromarray((255 * data).astype("uint8"))
 
     pix = np.array(img)
@@ -51,8 +51,8 @@ def deskew(image,filter:int=1):
 
 def get_lines(image, cut=3):
 
-    gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    gray_img = cv2.bitwise_not(gray_img)
+    gray_img = cvtColor(image, COLOR_BGR2GRAY)
+    gray_img = bitwise_not(gray_img)
 
     clean_img = deskew(gray_img, 0)
 
@@ -329,7 +329,7 @@ def check_hole(segment):
 
     # no_dots = segment.copy()
 
-    contours, hierarchy = cv2.findContours(segment, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    contours, hierarchy = findContours(segment, RETR_TREE, CHAIN_APPROX_NONE)
     cnt = 0
     for hier in hierarchy[0]:
         if hier[3] >= 0:
@@ -343,7 +343,7 @@ def remove_dots(word_img, threshold=11):
 
     no_dots = word_img.copy()
 
-    components, labels, stats, GoCs = cv2.connectedComponentsWithStats(no_dots, connectivity=8)
+    components, labels, stats, GoCs = connectedComponentsWithStats(no_dots, connectivity=8)
     char = []
     for label in range(1, components):
         _, _, _, _, size = stats[label]
@@ -360,7 +360,7 @@ def remove_dots(word_img, threshold=11):
 
 def check_dots(segment):
 
-    contours, hierarchy = cv2.findContours(segment[:, 1:segment.shape[1]-1], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = findContours(segment[:, 1:segment.shape[1]-1], RETR_TREE, CHAIN_APPROX_SIMPLE)
 
     cnt = 0
     for c in contours:
@@ -373,7 +373,7 @@ def check_dots(segment):
 def check_stroke(no_dots_copy, segment, upper_base, lower_base, SR1, SR2):
 
     T = 1
-    components, labels, stats, cen= cv2.connectedComponentsWithStats(segment, connectivity=8)
+    components, labels, stats, cen= connectedComponentsWithStats(segment, connectivity=8)
     skeleton = skeletonize(segment.copy()).astype(np.uint8)
     (h, w) = segment.shape
 
@@ -441,7 +441,7 @@ def filter_regions(word_img, no_dots_copy, SRL:list, VP:list, upper_base:int, lo
     overlap = []
 
     T = 1
-    components, labels= cv2.connectedComponents(word_img[:lower_base+5, :], connectivity=8)
+    components, labels = connectedComponents(word_img[:lower_base+5, :], connectivity=8)
 
     SR_idx = 0
     while SR_idx < len(SRL):
@@ -467,7 +467,7 @@ def filter_regions(word_img, no_dots_copy, SRL:list, VP:list, upper_base:int, lo
 
         # Case 3 : Contain Holes
         # if check_hole(no_dots_copy[:, end_idx: cut_idx]) and inside_hole(no_dots_copy, end_idx, start_idx):
-        cc, l = cv2.connectedComponents(1-(no_dots_copy[:, end_idx:start_idx+1]), connectivity=4)
+        cc, l = connectedComponents(1-(no_dots_copy[:, end_idx:start_idx+1]), connectivity=4)
         
         if cc-1 >= 3 and inside_hole(no_dots_copy, end_idx, start_idx):
             SR_idx += 1
